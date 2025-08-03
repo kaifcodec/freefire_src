@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector android:drawable="@drawable/$splash_icon__0"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:aapt="http://schemas.android.com/aapt">
+    <target android:name="stroke_front_yellow" android:animation="@drawable/$splash_icon__1" />
+    <target android:name="stroke_front_purple" android:animation="@drawable/$splash_icon__2" />
+    <target android:name="stroke_behind_yellow" android:animation="@drawable/$splash_icon__3" />
+    <target android:name="stroke_behind_purple" android:animation="@drawable/$splash_icon__4" />
+    <target android:name="group_2" android:animation="@drawable/$splash_icon__5" />
+    <target android:name="group_1" android:animation="@drawable/$splash_icon__6" />
+    <target android:name="group" android:animation="@drawable/$splash_icon__7" />
+    <target android:name="group_3" android:animation="@drawable/$splash_icon__8" />
+    <target android:name="fill_front" android:animation="@drawable/$splash_icon__9" />
+    <target android:name="fill_behind" android:animation="@drawable/$splash_icon__10" />
+    <target android:name="group_4" android:animation="@drawable/$splash_icon__11" />
+</animated-vector>

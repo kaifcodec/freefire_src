@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?><!--https://developer.android.com/studio/build/shrink-code-->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@integer/me_line_sdk_ChannelId,@integer/com_vk_sdk_AppId" />

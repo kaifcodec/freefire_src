@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:aapt="http://schemas.android.com/aapt">
+    <objectAnimator android:interpolator="@android:interpolator/fast_out_slow_in" android:duration="227" android:startOffset="604" android:valueFrom="0.1" android:valueTo="0.5" android:valueType="floatType" android:propertyName="fillAlpha" />
+    <objectAnimator android:interpolator="@android:interpolator/fast_out_slow_in" android:duration="46" android:startOffset="831" android:valueFrom="0.5" android:valueTo="0.2" android:valueType="floatType" android:propertyName="fillAlpha" />
+    <objectAnimator android:interpolator="@android:interpolator/fast_out_slow_in" android:duration="35" android:startOffset="877" android:valueFrom="0.1" android:valueTo="0.5" android:valueType="floatType" android:propertyName="fillAlpha" />
+    <objectAnimator android:interpolator="@android:interpolator/fast_out_slow_in" android:duration="46" android:startOffset="912" android:valueFrom="0.5" android:valueTo="0.2" android:valueType="floatType" android:propertyName="fillAlpha" />
+    <objectAnimator android:interpolator="@android:interpolator/fast_out_slow_in" android:duration="35" android:startOffset="958" android:valueFrom="0.1" android:valueTo="0.5" android:valueType="floatType" android:propertyName="fillAlpha" />
+    <objectAnimator android:interpolator="@android:interpolator/fast_out_slow_in" android:duration="46" android:startOffset="993" android:valueFrom="0.5" android:valueTo="0.2" android:valueType="floatType" android:propertyName="fillAlpha" />
+    <objectAnimator android:interpolator="@android:interpolator/fast_out_slow_in" android:duration="46" android:startOffset="1039" android:valueFrom="0.2" android:valueTo="1" android:valueType="floatType" android:propertyName="fillAlpha" />
+    <objectAnimator android:interpolator="@android:interpolator/fast_out_slow_in" android:duration="10" android:valueFrom="0" android:valueTo="0" android:valueType="floatType" android:propertyName="fillAlpha" />
+</set>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="permission_goto_application_details_settings">Free Fire requires access for {%s} in order to run. Please click Go to manage the access restrictions of the app.</string>
+    <string name="permission_goto_application_details_settings_no">Exit Game</string>
+    <string name="permission_goto_application_details_settings_or_later">You may still change access in Settings.</string>
+    <string name="permission_goto_application_details_settings_or_later_no">CONTINUE TO GAME</string>
+    <string name="permission_goto_application_details_settings_or_later_yes">SETTINGS</string>
+    <string name="permission_goto_application_details_settings_title">Unable to retrieve access</string>
+    <string name="permission_goto_application_details_settings_yes">Go</string>
+    <string name="permission_rationale_bluetooth_connect">Free Fire requires Bluetooth access to enable the use of wireless earphones.</string>
+    <string name="permission_rationale_critical_no">Do Not Allow</string>
+    <string name="permission_rationale_critical_yes">Allow</string>
+    <string name="permission_rationale_external_storage">In order for Free Fire to run, please allow Free Fire to save important account information, updates and images to your device.</string>
+    <string name="permission_rationale_neutral">Confirm</string>
+    <string name="permission_rationale_post_notifications">Free Fire would like to use notifications to keep you informed about the latest events and updates.</string>
+    <string name="permission_rationale_record_audio">Please allow Free Fire access to your microphone for in-game voice chat and recording. You can manage this under Settings.</string>
+    <string name="permission_rationale_title">Access Descriptions</string>
+    <string name="permission_rationale_trivial_no">Do Not Allow</string>
+    <string name="permission_rationale_trivial_yes">Allow</string>
+    <string name="permission_rationales">[Allow access to Read Data] Record users account information for quick login; save game updates and photos</string>
+</resources>

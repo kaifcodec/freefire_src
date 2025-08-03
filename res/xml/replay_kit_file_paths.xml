@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <files-path name="replay_folder_internal" path="ReplayKit/" />
+    <external-path name="replay_folder_external" path="." />
+</paths>

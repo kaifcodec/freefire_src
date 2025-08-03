@@ -1,0 +1,117 @@
+.class public final Lcom/google/android/gms/internal/measurement/mg;
+.super Ljava/lang/Object;
+.source "SourceFile"
+
+# interfaces
+.implements Lh8/k;
+
+
+# annotations
+.annotation system Ldalvik/annotation/Signature;
+    value = {
+        "Ljava/lang/Object;",
+        "Lh8/k<",
+        "Lcom/google/android/gms/internal/measurement/pg;",
+        ">;"
+    }
+.end annotation
+
+
+# static fields
+.field private static b:Lcom/google/android/gms/internal/measurement/mg;
+
+
+# instance fields
+.field private final a:Lh8/k;
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "Lh8/k<",
+            "Lcom/google/android/gms/internal/measurement/pg;",
+            ">;"
+        }
+    .end annotation
+.end field
+
+
+# direct methods
+.method static constructor <clinit>()V
+    .locals 1
+
+    new-instance v0, Lcom/google/android/gms/internal/measurement/mg;
+
+    invoke-direct {v0}, Lcom/google/android/gms/internal/measurement/mg;-><init>()V
+
+    sput-object v0, Lcom/google/android/gms/internal/measurement/mg;->b:Lcom/google/android/gms/internal/measurement/mg;
+
+    return-void
+.end method
+
+.method public constructor <init>()V
+    .locals 1
+
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    new-instance v0, Lcom/google/android/gms/internal/measurement/og;
+
+    invoke-direct {v0}, Lcom/google/android/gms/internal/measurement/og;-><init>()V
+
+    invoke-static {v0}, Lh8/l;->b(Ljava/lang/Object;)Lh8/k;
+
+    move-result-object v0
+
+    iput-object v0, p0, Lcom/google/android/gms/internal/measurement/mg;->a:Lh8/k;
+
+    return-void
+.end method
+
+.method public static a()Z
+    .locals 1
+
+    sget-object v0, Lcom/google/android/gms/internal/measurement/mg;->b:Lcom/google/android/gms/internal/measurement/mg;
+
+    invoke-virtual {v0}, Lcom/google/android/gms/internal/measurement/mg;->get()Ljava/lang/Object;
+
+    move-result-object v0
+
+    check-cast v0, Lcom/google/android/gms/internal/measurement/pg;
+
+    invoke-interface {v0}, Lcom/google/android/gms/internal/measurement/pg;->b()Z
+
+    move-result v0
+
+    return v0
+.end method
+
+.method public static b()Z
+    .locals 1
+
+    sget-object v0, Lcom/google/android/gms/internal/measurement/mg;->b:Lcom/google/android/gms/internal/measurement/mg;
+
+    invoke-virtual {v0}, Lcom/google/android/gms/internal/measurement/mg;->get()Ljava/lang/Object;
+
+    move-result-object v0
+
+    check-cast v0, Lcom/google/android/gms/internal/measurement/pg;
+
+    invoke-interface {v0}, Lcom/google/android/gms/internal/measurement/pg;->c()Z
+
+    move-result v0
+
+    return v0
+.end method
+
+
+# virtual methods
+.method public final synthetic get()Ljava/lang/Object;
+    .locals 1
+
+    iget-object v0, p0, Lcom/google/android/gms/internal/measurement/mg;->a:Lh8/k;
+
+    invoke-interface {v0}, Lh8/k;->get()Ljava/lang/Object;
+
+    move-result-object v0
+
+    check-cast v0, Lcom/google/android/gms/internal/measurement/pg;
+
+    return-object v0
+.end method

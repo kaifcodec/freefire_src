@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="regions">
+        <item>singapore:SG</item>
+        <item>kuala_lumpur:MY</item>
+        <item>kuching:MY</item>
+        <item>bangkok:TH</item>
+        <item>taipei:TW</item>
+        <item>makassar:ID</item>
+        <item>pontianak:ID</item>
+        <item>jayapura:ID</item>
+        <item>jakarta:ID</item>
+        <item>ho_chi_minh:VN</item>
+        <item>rangoon:MM</item>
+        <item>kashgar:CN</item>
+        <item>urumqi:CN</item>
+        <item>harbin:CN</item>
+        <item>beijing:CN</item>
+        <item>chongqing:CN</item>
+        <item>shanghai:CN</item>
+        <item>shanghai:CN</item>
+        <item>seoul:KR</item>
+        <item>tokyo:JP</item>
+        <item>moscow:RU</item>
+        <item>manila:PH</item>
+        <item>almaty:KZ</item>
+        <item>kolkata:IN</item>
+        <item>klev:UA</item>
+        <item>hong_kong:HK</item>
+        <item>macau:MO</item>
+    </string-array>
+</resources>
