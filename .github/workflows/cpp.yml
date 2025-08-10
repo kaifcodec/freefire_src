@@ -11,10 +11,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup .NET 7
+      - name: Setup .NET 6
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '7.0.x'
+          dotnet-version: '6.0.x'
 
       - name: Install basic tools
         run: |
@@ -23,8 +23,8 @@ jobs:
 
       - name: Download specialized Free Fire Il2CppDumper
         run: |
-          curl -fsSL -o FreeFire-Il2CppDumper.zip "https://github.com/tien0246/Il2CppDumper-Free-Fire/releases/latest/download/Il2CppDumper-Free-Fire.zip"
-          unzip -q FreeFire-Il2CppDumper.zip -d FreeFire-Il2CppDumper
+          curl -fsSL -o Il2CppDumper-for-Free-Fire.zip "https://github.com/tien0246/Il2CppDumper-Free-Fire/releases/download/1.0/Il2CppDumper-for-Free-Fire.zip"
+          unzip -q Il2CppDumper-for-Free-Fire.zip -d FreeFire-Il2CppDumper
 
       - name: Download Free Fire Max APK
         run: |
@@ -38,11 +38,19 @@ jobs:
           mkdir -p assets/bin/Data/Managed/Metadata
           cp apk_extracted/assets/bin/Data/Managed/Metadata/global-metadata.dat assets/bin/Data/Managed/Metadata/
 
+      - name: Verify extracted files
+        run: |
+          echo "libil2cpp.so size: $(stat -c%s libil2cpp.so) bytes"
+          echo "global-metadata.dat size: $(stat -c%s assets/bin/Data/Managed/Metadata/global-metadata.dat) bytes"
+          file libil2cpp.so
+          file assets/bin/Data/Managed/Metadata/global-metadata.dat
+
       - name: Create output directory
         run: mkdir -p dumper_output
 
       - name: Run specialized Free Fire Il2CppDumper
         run: |
+          echo "Running specialized Free Fire Il2CppDumper..."
           set +e
           dotnet FreeFire-Il2CppDumper/Il2CppDumper.dll libil2cpp.so assets/bin/Data/Managed/Metadata/global-metadata.dat dumper_output
           exit_code=$?
@@ -51,17 +59,20 @@ jobs:
           echo "Specialized dumper exit code: $exit_code"
           
           if [ -d "dumper_output" ] && [ "$(ls -A dumper_output 2>/dev/null)" ]; then
-            echo "Specialized Free Fire dumper succeeded!"
-            cs_files=$(find dumper_output -name '*.cs' | wc -l)
-            echo "Generated $cs_files C# files"
+            echo "SUCCESS: Specialized Free Fire dumper worked!"
+            cs_files=$(find dumper_output -name '*.cs' 2>/dev/null | wc -l)
+            json_files=$(find dumper_output -name '*.json' 2>/dev/null | wc -l)
+            py_files=$(find dumper_output -name '*.py' 2>/dev/null | wc -l)
+            echo "Generated files - C#: $cs_files, JSON: $json_files, Python: $py_files"
+            ls -la dumper_output/
           else
-            echo "Specialized dumper also failed"
+            echo "Specialized dumper failed to generate output"
           fi
 
       - name: Upload results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: FreeFire-Specialized-Dump
+          name: FreeFire-Specialized-Dump-Results
           path: dumper_output/
           retention-days: 30
