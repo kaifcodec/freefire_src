@@ -12,20 +12,23 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-pip curl unzip
-          pip3 install Il2CppDumper
+          sudo apt-get install -y unzip curl
+
+      - name: Download and setup Il2CppDumper
+        run: |
+          # The URL below is for a placeholder version. You may need to update this to the latest version.
+          curl -L "https://github.com/Perfare/Il2CppDumper/releases/download/v6.7.22/Il2CppDumper-v6.7.22-Linux.zip" -o Il2CppDumper.zip
+          unzip Il2CppDumper.zip -d Il2CppDumper
 
       - name: Download and unzip libil2cpp.so
         run: |
-          # Replace this URL with the direct download link to your libil2cpp.so file.
           curl -L "https://github.com/kaifcodec/Upload_apk/archive/refs/tags/v1.1.2.zip" -o libil2cpp.so.zip
           unzip libil2cpp.so.zip
-          # Move the libil2cpp.so file to a predictable location
           mv Upload_apk-1.1.2/lib/arm64-v8a/libil2cpp.so .
 
       - name: Run Il2CppDumper
         run: |
-          Il2CppDumper libil2cpp.so assets/bin/Data/Managed/Metadata/global-metadata.dat --output dumper_output
+          ./Il2CppDumper/Il2CppDumper libil2cpp.so assets/bin/Data/Managed/Metadata/global-metadata.dat --output dumper_output
 
       - name: Upload Dumper Output as Artifact
         uses: actions/upload-artifact@v4
