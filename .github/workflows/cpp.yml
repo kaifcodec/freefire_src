@@ -113,36 +113,35 @@ jobs:
             echo "❌ Required files not available"
             echo "Free Fire Max uses encrypted IL2CPP files that require runtime dumping"
             
-            # Create informational report
-            cat > dumper_output/FREE_FIRE_PROTECTION_INFO.txt << 'EOF'
-Free Fire Max IL2CPP Protection Analysis
-=======================================
-
-Status: Cannot extract IL2CPP files from APK
-Reason: Free Fire Max uses encrypted/protected IL2CPP files
-
-Protection Methods Detected:
-1. Encrypted global-metadata.dat in APK
-2. Runtime decryption of metadata
-3. Stripped libil2cpp.so without symbols
-4. Anti-dumping detection mechanisms
-
-Required Approach:
-- Runtime memory dumping using tools like:
-  * Game Guardian with IL2CPP dumping scripts
-  * Frida-based dumping tools
-  * LibDumper with root access
-  * Memory dump analysis during game execution
-
-Alternative Solutions:
-1. Use runtime dumping tools on a rooted device
-2. Use Frida scripts for runtime IL2CPP extraction
-3. Memory analysis during game execution
-4. Use specialized tools like Il2CppInspector with memory dumps
-
-Note: This protection is intentional by Garena to prevent
-reverse engineering and cheat development.
-EOF
+            # Create informational report using echo instead of heredoc
+            echo "Free Fire Max IL2CPP Protection Analysis" > dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            echo "=======================================" >> dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            echo "" >> dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            echo "Status: Cannot extract IL2CPP files from APK" >> dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            echo "Reason: Free Fire Max uses encrypted/protected IL2CPP files" >> dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            echo "" >> dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            echo "Protection Methods Detected:" >> dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            echo "1. Encrypted global-metadata.dat in APK" >> dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            echo "2. Runtime decryption of metadata" >> dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            echo "3. Stripped libil2cpp.so without symbols" >> dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            echo "4. Anti-dumping detection mechanisms" >> dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            echo "" >> dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            echo "Required Approach:" >> dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            echo "- Runtime memory dumping using tools like:" >> dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            echo "  * Game Guardian with IL2CPP dumping scripts" >> dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            echo "  * Frida-based dumping tools" >> dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            echo "  * LibDumper with root access" >> dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            echo "  * Memory dump analysis during game execution" >> dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            echo "" >> dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            echo "Alternative Solutions:" >> dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            echo "1. Use runtime dumping tools on a rooted device" >> dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            echo "2. Use Frida scripts for runtime IL2CPP extraction" >> dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            echo "3. Memory analysis during game execution" >> dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            echo "4. Use specialized tools like Il2CppInspector with memory dumps" >> dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            echo "" >> dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            echo "Note: This protection is intentional by Garena to prevent" >> dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            echo "reverse engineering and cheat development." >> dumper_output/FREE_FIRE_PROTECTION_INFO.txt
+            
             exit 0
           fi
 
