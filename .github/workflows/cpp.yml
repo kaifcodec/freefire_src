@@ -1,0 +1,34 @@
+name: Il2CppDumping
+
+on: [push, workflow_dispatch]
+
+jobs:
+  dump-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip curl unzip
+          pip3 install Il2CppDumper
+
+      - name: Download and unzip libil2cpp.so
+        run: |
+          # Replace this URL with the direct download link to your libil2cpp.so file.
+          curl -L "https://github.com/kaifcodec/Upload_apk/archive/refs/tags/v1.1.2.zip" -o libil2cpp.so.zip
+          unzip libil2cpp.so.zip
+          # Move the libil2cpp.so file to a predictable location
+          mv Upload_apk-1.1.2/lib/arm64-v8a/libil2cpp.so .
+
+      - name: Run Il2CppDumper
+        run: |
+          Il2CppDumper libil2cpp.so assets/bin/Data/Managed/Metadata/global-metadata.dat --output dumper_output
+
+      - name: Upload Dumper Output as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Il2CppDumper-Results
+          path: dumper_output/
