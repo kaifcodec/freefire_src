@@ -23,18 +23,16 @@ jobs:
 
       - name: Download Il2CppDumper (net6)
         run: |
-           set -e
+          set -e
           curl -fsSL -o Il2CppDumper.zip "https://github.com/Perfare/Il2CppDumper/releases/download/v6.7.46/Il2CppDumper-net6-v6.7.46.zip"
-          # sanity check to avoid HTML/tiny downloads
           test $(stat -c%s Il2CppDumper.zip) -gt 100000
           unzip -q Il2CppDumper.zip -d Il2CppDumper
 
-      - name: Download libil2cpp.so (example arm64 from v1.1.2)
+      - name: Download libil2cpp.so (direct from v1.1.2 release)
         run: |
-          curl -fsSL -o "https://github.com/kaifcodec/Upload_apk/releases/download/v1.1.2/libil2cpp.so"
-          # cp Upload_apk-1.1.2/lib/arm64-v8a/libil2cpp.so .
+          curl -fsSL -o libil2cpp.so "https://github.com/kaifcodec/Upload_apk/releases/download/v1.1.2/libil2cpp.so"
 
-      - name: Download global-metadata.dat (your link)
+      - name: Download global-metadata.dat
         run: |
           curl -fsSL -o global-metadata.dat "https://github.com/kaifcodec/Upload_apk/releases/download/v1.1.3/global-metadata.dat"
           mkdir -p assets/bin/Data/Managed/Metadata
