@@ -1,4 +1,4 @@
-name: FreeFire-Il2CppDumping-Simple
+name: FreeFire-Specialized-Il2CppDumping
 
 on:
   push:
@@ -11,22 +11,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup .NET 6
+      - name: Setup .NET 7
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '6.0.x'
+          dotnet-version: '7.0.x'
 
       - name: Install basic tools
         run: |
           sudo apt-get update
           sudo apt-get install -y unzip curl file
 
-      - name: Download Il2CppDumper (net6)
+      - name: Download specialized Free Fire Il2CppDumper
         run: |
-          set -e
-          curl -fsSL -o Il2CppDumper.zip "https://github.com/Perfare/Il2CppDumper/releases/download/v6.7.46/Il2CppDumper-net6-v6.7.46.zip"
-          test $(stat -c%s Il2CppDumper.zip) -gt 100000
-          unzip -q Il2CppDumper.zip -d Il2CppDumper
+          curl -fsSL -o FreeFire-Il2CppDumper.zip "https://github.com/tien0246/Il2CppDumper-Free-Fire/releases/latest/download/Il2CppDumper-Free-Fire.zip"
+          unzip -q FreeFire-Il2CppDumper.zip -d FreeFire-Il2CppDumper
 
       - name: Download Free Fire Max APK
         run: |
@@ -43,42 +41,27 @@ jobs:
       - name: Create output directory
         run: mkdir -p dumper_output
 
-      - name: Try Il2CppDumper
+      - name: Run specialized Free Fire Il2CppDumper
         run: |
           set +e
-          printf '\n\n' | timeout 120 dotnet Il2CppDumper/Il2CppDumper.dll libil2cpp.so assets/bin/Data/Managed/Metadata/global-metadata.dat dumper_output
+          dotnet FreeFire-Il2CppDumper/Il2CppDumper.dll libil2cpp.so assets/bin/Data/Managed/Metadata/global-metadata.dat dumper_output
           exit_code=$?
           set -e
           
+          echo "Specialized dumper exit code: $exit_code"
+          
           if [ -d "dumper_output" ] && [ "$(ls -A dumper_output 2>/dev/null)" ]; then
-            echo "Il2CppDumper succeeded"
-            echo "DUMPER_SUCCESS=true" >> $GITHUB_ENV
+            echo "Specialized Free Fire dumper succeeded!"
+            cs_files=$(find dumper_output -name '*.cs' | wc -l)
+            echo "Generated $cs_files C# files"
           else
-            echo "Il2CppDumper failed"
-            echo "DUMPER_SUCCESS=false" >> $GITHUB_ENV
+            echo "Specialized dumper also failed"
           fi
-
-      - name: Try Il2CppInspector fallback
-        if: env.DUMPER_SUCCESS == 'false'
-        run: |
-          set +e
-          curl -fsSL -o Il2CppInspector.zip "https://github.com/djkaty/Il2CppInspector/releases/download/2022.3.2/Il2CppInspector-2022.3.2-linux-x64.zip" || exit 1
-          unzip -q Il2CppInspector.zip -d Il2CppInspector
-          chmod +x Il2CppInspector/Il2CppInspector.CLI
-          
-          mkdir -p inspector_output
-          ./Il2CppInspector/Il2CppInspector.CLI --bin=libil2cpp.so --metadata=assets/bin/Data/Managed/Metadata/global-metadata.dat --out=inspector_output --select-outputs=cs,json || echo "Inspector failed"
-          
-          if [ -d "inspector_output" ] && [ "$(ls -A inspector_output 2>/dev/null)" ]; then
-            cp -r inspector_output/* dumper_output/
-            echo "Il2CppInspector succeeded"
-          fi
-          set -e
 
       - name: Upload results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: FreeFire-Analysis-Results
+          name: FreeFire-Specialized-Dump
           path: dumper_output/
           retention-days: 30
