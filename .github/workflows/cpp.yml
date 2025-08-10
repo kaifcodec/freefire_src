@@ -46,7 +46,7 @@ jobs:
 
       - name: Run Il2CppDumper
         run: |
-          dotnet Il2CppDumper/Il2CppDumper.dll libil2cpp.so assets/bin/Data/Managed/Metadata/global-metadata.dat --output dumper_output
+          dotnet Il2CppDumper/Il2CppDumper.dll libil2cpp.so assets/bin/Data/Managed/Metadata/global-metadata.dat dumper_output
 
       - name: Upload Dumper Output as Artifact
         if: always()
