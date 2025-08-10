@@ -1,17 +1,46 @@
-- name: Install .NET 6 runtime
-  run: |
-    sudo apt-get update
-    sudo apt-get install -y dotnet-runtime-6.0
+name: Il2CppDumping
 
-- name: Download Il2CppDumper (net6)
-  run: |
-    set -e
-    curl -fsSL -o Il2CppDumper.zip "https://github.com/Perfare/Il2CppDumper/releases/download/v6.7.46/Il2CppDumper-net6-v6.7.46.zip"
-    # sanity check to avoid HTML/9-byte downloads
-    test $(stat -c%s Il2CppDumper.zip) -gt 100000
-    unzip -q Il2CppDumper.zip -d Il2CppDumper
+on:
+  push:
+  workflow_dispatch:
 
-- name: Run Il2CppDumper
-  run: |
-    dotnet Il2CppDumper/Il2CppDumper.dll libil2cpp.so assets/bin/Data/Managed/Metadata/global-metadata.dat --output dumper_output
+jobs:
+  dump-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
+      # Prefer setup-dotnet to ensure the right runtime/SDK is available
+      - name: Setup .NET 6
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: Install basic tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y unzip curl
+
+      - name: Download Il2CppDumper (net6)
+        run: |
+          set -e
+          curl -fsSL -o Il2CppDumper.zip "https://github.com/Perfare/Il2CppDumper/releases/download/v6.7.46/Il2CppDumper-net6-v6.7.46.zip"
+          test $(stat -c%s Il2CppDumper.zip) -gt 100000
+          unzip -q Il2CppDumper.zip -d Il2CppDumper
+
+      - name: Ensure inputs exist
+        run: |
+          test -f libil2cpp.so
+          test -f assets/bin/Data/Managed/Metadata/global-metadata.dat
+          mkdir -p dumper_output
+
+      - name: Run Il2CppDumper
+        run: |
+          dotnet Il2CppDumper/Il2CppDumper.dll libil2cpp.so assets/bin/Data/Managed/Metadata/global-metadata.dat --output dumper_output
+
+      - name: Upload Dumper Output as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Il2CppDumper-Results
+          path: dumper_output/
