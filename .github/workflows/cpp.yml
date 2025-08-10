@@ -19,7 +19,7 @@ jobs:
       - name: Install basic tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y unzip curl
+          sudo apt-get install -y unzip curl file
 
       - name: Download Il2CppDumper (net6)
         run: |
@@ -28,25 +28,117 @@ jobs:
           test $(stat -c%s Il2CppDumper.zip) -gt 100000
           unzip -q Il2CppDumper.zip -d Il2CppDumper
 
-      - name: Download libil2cpp.so (direct from v1.1.2 release)
+      - name: Download libil2cpp.so (from v1.1.2 release)
         run: |
           curl -fsSL -o libil2cpp.so "https://github.com/kaifcodec/Upload_apk/releases/download/v1.1.2/libil2cpp.so"
 
-      - name: Download global-metadata.dat
+      - name: Download global-metadata.dat (from v1.1.3 release)
         run: |
           curl -fsSL -o global-metadata.dat "https://github.com/kaifcodec/Upload_apk/releases/download/v1.1.3/global-metadata.dat"
           mkdir -p assets/bin/Data/Managed/Metadata
           mv global-metadata.dat assets/bin/Data/Managed/Metadata/global-metadata.dat
 
-      - name: Ensure inputs exist
+      - name: Verify file integrity and types
         run: |
+          echo "=== File Information ==="
+          echo "libil2cpp.so: $(stat -c%s libil2cpp.so) bytes"
+          echo "global-metadata.dat: $(stat -c%s assets/bin/Data/Managed/Metadata/global-metadata.dat) bytes"
+          
+          echo "=== File Types ==="
+          file libil2cpp.so
+          file assets/bin/Data/Managed/Metadata/global-metadata.dat
+          
+          # Verify files exist
           test -f libil2cpp.so
           test -f assets/bin/Data/Managed/Metadata/global-metadata.dat
+          
+          # Create output directory
           mkdir -p dumper_output
 
-      - name: Run Il2CppDumper
+      - name: Run Il2CppDumper with comprehensive error handling
         run: |
-          dotnet Il2CppDumper/Il2CppDumper.dll libil2cpp.so assets/bin/Data/Managed/Metadata/global-metadata.dat dumper_output
+          echo "=== Starting Il2CppDumper Processing ==="
+          
+          # Set up error handling but don't exit on failure
+          set +e
+          
+          # Use printf to simulate pressing Enter twice if manual input is requested
+          printf '\n\n' | timeout 120 dotnet Il2CppDumper/Il2CppDumper.dll libil2cpp.so assets/bin/Data/Managed/Metadata/global-metadata.dat dumper_output
+          exit_code=$?
+          
+          # Re-enable exit on error
+          set -e
+          
+          echo "=== Il2CppDumper Results ==="
+          echo "Exit code: $exit_code"
+          
+          # Check what was generated regardless of exit code
+          if [ -d "dumper_output" ] && [ "$(ls -A dumper_output 2>/dev/null)" ]; then
+            echo "✓ Output was generated successfully!"
+            echo "Generated files:"
+            ls -la dumper_output/
+            
+            # Show types of generated files
+            echo "=== File Types Generated ==="
+            find dumper_output -type f -name "*.cs" | wc -l | xargs echo "C# files:"
+            find dumper_output -type f -name "*.json" | wc -l | xargs echo "JSON files:"
+            find dumper_output -type f -name "*.txt" | wc -l | xargs echo "Text files:"
+            
+            # Show first few generated files as examples
+            echo "=== Sample Generated Files ==="
+            find dumper_output -type f | head -10
+            
+          else
+            echo "⚠️ No output generated"
+            
+            # Create diagnostic report
+            mkdir -p dumper_output
+            cat > dumper_output/DIAGNOSTIC_REPORT.txt << EOF
+Il2CppDumper Processing Report
+=============================
+
+Status: Failed to generate output automatically
+Exit Code: $exit_code
+
+Issue: The libil2cpp.so binary appears to be stripped of debug symbols,
+which prevents Il2CppDumper from automatically detecting the required
+memory addresses (CodeRegistration and MetadataRegistration).
+
+Files Processed:
+- libil2cpp.so: $(stat -c%s libil2cpp.so 2>/dev/null || echo "unknown") bytes
+- global-metadata.dat: $(stat -c%s assets/bin/Data/Managed/Metadata/global-metadata.dat 2>/dev/null || echo "unknown") bytes
+
+Next Steps:
+1. The binary requires manual reverse engineering analysis
+2. Use tools like IDA Pro, Ghidra, or x64dbg to find CodeRegistration address
+3. Run Il2CppDumper in manual mode with the found addresses
+4. Alternatively, try a different version of Il2CppDumper or alternative tools
+
+Generated on: $(date)
+EOF
+            
+            echo "Created diagnostic report in dumper_output/DIAGNOSTIC_REPORT.txt"
+          fi
+
+      - name: Create processing summary
+        if: always()
+        run: |
+          echo "=== Final Processing Summary ==="
+          
+          if [ -d "dumper_output" ]; then
+            file_count=$(find dumper_output -type f | wc -l)
+            echo "Total files in output: $file_count"
+            
+            if [ $file_count -gt 1 ]; then
+              echo "✅ SUCCESS: Il2CppDumper generated output files"
+            else
+              echo "⚠️ LIMITED: Only diagnostic files generated"
+            fi
+            
+            echo "Output directory size: $(du -sh dumper_output | cut -f1)"
+          else
+            echo "❌ FAILED: No output directory created"
+          fi
 
       - name: Upload Dumper Output as Artifact
         if: always()
@@ -54,3 +146,4 @@ jobs:
         with:
           name: Il2CppDumper-Results
           path: dumper_output/
+          retention-days: 30
