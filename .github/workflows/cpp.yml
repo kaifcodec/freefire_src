@@ -1,37 +1,17 @@
-name: Il2CppDumping
+- name: Install .NET 6 runtime
+  run: |
+    sudo apt-get update
+    sudo apt-get install -y dotnet-runtime-6.0
 
-on: [push, workflow_dispatch]
+- name: Download Il2CppDumper (net6)
+  run: |
+    set -e
+    curl -fsSL -o Il2CppDumper.zip "https://github.com/Perfare/Il2CppDumper/releases/download/v6.7.46/Il2CppDumper-net6-v6.7.46.zip"
+    # sanity check to avoid HTML/9-byte downloads
+    test $(stat -c%s Il2CppDumper.zip) -gt 100000
+    unzip -q Il2CppDumper.zip -d Il2CppDumper
 
-jobs:
-  dump-apk:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+- name: Run Il2CppDumper
+  run: |
+    dotnet Il2CppDumper/Il2CppDumper.dll libil2cpp.so assets/bin/Data/Managed/Metadata/global-metadata.dat --output dumper_output
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y unzip curl
-
-      - name: Download and setup Il2CppDumper
-        run: |
-          # The URL below is for a placeholder version. You may need to update this to the latest version.
-          curl -L "https://github.com/Perfare/Il2CppDumper/releases/download/v6.7.22/Il2CppDumper-v6.7.22-Linux.zip" -o Il2CppDumper.zip
-          unzip Il2CppDumper.zip -d Il2CppDumper
-
-      - name: Download and unzip libil2cpp.so
-        run: |
-          curl -L "https://github.com/kaifcodec/Upload_apk/archive/refs/tags/v1.1.2.zip" -o libil2cpp.so.zip
-          unzip libil2cpp.so.zip
-          mv Upload_apk-1.1.2/lib/arm64-v8a/libil2cpp.so .
-
-      - name: Run Il2CppDumper
-        run: |
-          ./Il2CppDumper/Il2CppDumper libil2cpp.so assets/bin/Data/Managed/Metadata/global-metadata.dat --output dumper_output
-
-      - name: Upload Dumper Output as Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: Il2CppDumper-Results
-          path: dumper_output/
