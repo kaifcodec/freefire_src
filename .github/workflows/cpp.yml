@@ -1,4 +1,4 @@
-name: FreeFire-Specialized-Il2CppDumping
+name: FreeFire-Specialized-Il2CppDumping-Fixed
 
 on:
   push:
@@ -11,10 +11,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup .NET 6
+      - name: Setup .NET 7
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '6.0.x'
+          dotnet-version: '7.0.x'
 
       - name: Install basic tools
         run: |
@@ -50,7 +50,7 @@ jobs:
 
       - name: Run specialized Free Fire Il2CppDumper
         run: |
-          echo "Running specialized Free Fire Il2CppDumper..."
+          echo "Running specialized Free Fire Il2CppDumper with .NET 7..."
           set +e
           dotnet FreeFire-Il2CppDumper/Il2CppDumper.dll libil2cpp.so assets/bin/Data/Managed/Metadata/global-metadata.dat dumper_output
           exit_code=$?
