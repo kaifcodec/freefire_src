@@ -1,4 +1,4 @@
-name: FreeFire-Il2CppDumping-Enhanced
+name: FreeFire-Il2CppDumping-Simple
 
 on:
   push:
@@ -36,120 +36,49 @@ jobs:
         run: |
           mkdir -p apk_extracted
           unzip -q freefire-max.apk -d apk_extracted
-          
-          echo "=== APK Structure Analysis ==="
-          find apk_extracted -name "*.so" | head -10
-          find apk_extracted -name "*metadata*" | head -10
-          
-          # Copy files
           cp apk_extracted/lib/arm64-v8a/libil2cpp.so .
           mkdir -p assets/bin/Data/Managed/Metadata
           cp apk_extracted/assets/bin/Data/Managed/Metadata/global-metadata.dat assets/bin/Data/Managed/Metadata/
-          
-          echo "libil2cpp.so size: $(stat -c%s libil2cpp.so) bytes"
-          echo "global-metadata.dat size: $(stat -c%s assets/bin/Data/Managed/Metadata/global-metadata.dat) bytes"
-          file libil2cpp.so
-          file assets/bin/Data/Managed/Metadata/global-metadata.dat
 
       - name: Create output directory
-        run: |
-          mkdir -p dumper_output
+        run: mkdir -p dumper_output
 
-      - name: Attempt Il2CppDumper processing
+      - name: Try Il2CppDumper
         run: |
-          echo "=== Attempting Il2CppDumper v6.7.46 ==="
           set +e
           printf '\n\n' | timeout 120 dotnet Il2CppDumper/Il2CppDumper.dll libil2cpp.so assets/bin/Data/Managed/Metadata/global-metadata.dat dumper_output
           exit_code=$?
           set -e
           
-          echo "Il2CppDumper v6.7.46 exit code: $exit_code"
-          
           if [ -d "dumper_output" ] && [ "$(ls -A dumper_output 2>/dev/null)" ]; then
-            echo "✅ Il2CppDumper v6.7.46 succeeded!"
-            find dumper_output -name "*.cs" | wc -l | xargs echo "C# files generated:"
-            success=true
+            echo "Il2CppDumper succeeded"
+            echo "DUMPER_SUCCESS=true" >> $GITHUB_ENV
           else
-            echo "⚠️ Il2CppDumper v6.7.46 failed"
-            success=false
+            echo "Il2CppDumper failed"
+            echo "DUMPER_SUCCESS=false" >> $GITHUB_ENV
           fi
-          
-          echo "DUMPER_SUCCESS=$success" >> $GITHUB_ENV
 
-      - name: Try Il2CppInspector as fallback
+      - name: Try Il2CppInspector fallback
         if: env.DUMPER_SUCCESS == 'false'
         run: |
-          echo "=== Trying Il2CppInspector as fallback ==="
-          
-          curl -fsSL -o Il2CppInspector.zip "https://github.com/djkaty/Il2CppInspector/releases/latest/download/Il2CppInspector-linux-x64.zip"
+          set +e
+          curl -fsSL -o Il2CppInspector.zip "https://github.com/djkaty/Il2CppInspector/releases/download/2022.3.2/Il2CppInspector-2022.3.2-linux-x64.zip" || exit 1
           unzip -q Il2CppInspector.zip -d Il2CppInspector
           chmod +x Il2CppInspector/Il2CppInspector.CLI
           
           mkdir -p inspector_output
-          
-          ./Il2CppInspector/Il2CppInspector.CLI \
-            --bin=libil2cpp.so \
-            --metadata=assets/bin/Data/Managed/Metadata/global-metadata.dat \
-            --out=inspector_output \
-            --select-outputs=cs,json,py || echo "Il2CppInspector failed"
+          ./Il2CppInspector/Il2CppInspector.CLI --bin=libil2cpp.so --metadata=assets/bin/Data/Managed/Metadata/global-metadata.dat --out=inspector_output --select-outputs=cs,json || echo "Inspector failed"
           
           if [ -d "inspector_output" ] && [ "$(ls -A inspector_output 2>/dev/null)" ]; then
-            echo "✅ Il2CppInspector succeeded!"
-            cp -r inspector_output/* dumper_output/ 2>/dev/null || true
-            echo "INSPECTOR_SUCCESS=true" >> $GITHUB_ENV
-          else
-            echo "⚠️ Il2CppInspector also failed"
+            cp -r inspector_output/* dumper_output/
+            echo "Il2CppInspector succeeded"
           fi
+          set -e
 
-      - name: Try older Il2CppDumper version
-        if: env.DUMPER_SUCCESS == 'false' && env.INSPECTOR_SUCCESS != 'true'
-        run: |
-          echo "=== Trying Il2CppDumper v6.7.40 ==="
-          
-          curl -fsSL -o Il2CppDumper-old.zip "https://github.com/Perfare/Il2CppDumper/releases/download/v6.7.40/Il2CppDumper-net6-v6.7.40.zip"
-          unzip -q Il2CppDumper-old.zip -d Il2CppDumper-old
-          
-          printf '\n\n' | timeout 60 dotnet Il2CppDumper-old/Il2CppDumper.dll libil2cpp.so assets/bin/Data/Managed/Metadata/global-metadata.dat dumper_output_old || echo "Older version failed"
-          
-          if [ -d "dumper_output_old" ] && [ "$(ls -A dumper_output_old 2>/dev/null)" ]; then
-            echo "✅ Il2CppDumper v6.7.40 succeeded!"
-            cp -r dumper_output_old/* dumper_output/ 2>/dev/null || true
-          fi
-
-      - name: Generate final analysis report
-        if: always()
-        run: |
-          echo "=== Final Analysis Report ==="
-          
-          if [ -d "dumper_output" ] && [ "$(find dumper_output -name '*.cs' | wc -l)" -gt 0 ]; then
-            cs_files=$(find dumper_output -name '*.cs' | wc -l)
-            json_files=$(find dumper_output -name '*.json' | wc -l)
-            echo "✅ SUCCESS: Generated $cs_files C# files and $json_files JSON files"
-            
-            # Create summary
-            echo "Free Fire Max IL2CPP Dump Summary" > dumper_output/DUMP_SUMMARY.txt
-            echo "=================================" >> dumper_output/DUMP_SUMMARY.txt
-            echo "Generated Files:" >> dumper_output/DUMP_SUMMARY.txt
-            echo "- C# files: $cs_files" >> dumper_output/DUMP_SUMMARY.txt
-            echo "- JSON files: $json_files" >> dumper_output/DUMP_SUMMARY.txt
-            echo "- Total size: $(du -sh dumper_output | cut -f1)" >> dumper_output/DUMP_SUMMARY.txt
-            
-          else
-            echo "❌ All dumping methods failed"
-            
-            echo "Free Fire Max Analysis - Manual Methods Required" > dumper_output/MANUAL_ANALYSIS_GUIDE.txt
-            echo "================================================" >> dumper_output/MANUAL_ANALYSIS_GUIDE.txt
-            echo "The Free Fire Max binary is heavily stripped and protected." >> dumper_output/MANUAL_ANALYSIS_GUIDE.txt
-            echo "Consider these manual approaches:" >> dumper_output/MANUAL_ANALYSIS_GUIDE.txt
-            echo "1. Use IDA Pro/Ghidra to find CodeRegistration manually" >> dumper_output/MANUAL_ANALYSIS_GUIDE.txt
-            echo "2. Runtime memory dumping with Frida" >> dumper_output/MANUAL_ANALYSIS_GUIDE.txt
-            echo "3. GameGuardian IL2CPP dumping scripts" >> dumper_output/MANUAL_ANALYSIS_GUIDE.txt
-          fi
-
-      - name: Upload Analysis Results
+      - name: Upload results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: FreeFire-IL2CPP-Complete-Analysis
+          name: FreeFire-Analysis-Results
           path: dumper_output/
           retention-days: 30
