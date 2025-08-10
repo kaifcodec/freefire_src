@@ -91,31 +91,29 @@ jobs:
           else
             echo "⚠️ No output generated"
             
-            # Create diagnostic report
+            # Create diagnostic report using echo instead of heredoc
             mkdir -p dumper_output
-            cat > dumper_output/DIAGNOSTIC_REPORT.txt << EOF
-Il2CppDumper Processing Report
-=============================
-
-Status: Failed to generate output automatically
-Exit Code: $exit_code
-
-Issue: The libil2cpp.so binary appears to be stripped of debug symbols,
-which prevents Il2CppDumper from automatically detecting the required
-memory addresses (CodeRegistration and MetadataRegistration).
-
-Files Processed:
-- libil2cpp.so: $(stat -c%s libil2cpp.so 2>/dev/null || echo "unknown") bytes
-- global-metadata.dat: $(stat -c%s assets/bin/Data/Managed/Metadata/global-metadata.dat 2>/dev/null || echo "unknown") bytes
-
-Next Steps:
-1. The binary requires manual reverse engineering analysis
-2. Use tools like IDA Pro, Ghidra, or x64dbg to find CodeRegistration address
-3. Run Il2CppDumper in manual mode with the found addresses
-4. Alternatively, try a different version of Il2CppDumper or alternative tools
-
-Generated on: $(date)
-EOF
+            echo "Il2CppDumper Processing Report" > dumper_output/DIAGNOSTIC_REPORT.txt
+            echo "=============================" >> dumper_output/DIAGNOSTIC_REPORT.txt
+            echo "" >> dumper_output/DIAGNOSTIC_REPORT.txt
+            echo "Status: Failed to generate output automatically" >> dumper_output/DIAGNOSTIC_REPORT.txt
+            echo "Exit Code: $exit_code" >> dumper_output/DIAGNOSTIC_REPORT.txt
+            echo "" >> dumper_output/DIAGNOSTIC_REPORT.txt
+            echo "Issue: The libil2cpp.so binary appears to be stripped of debug symbols," >> dumper_output/DIAGNOSTIC_REPORT.txt
+            echo "which prevents Il2CppDumper from automatically detecting the required" >> dumper_output/DIAGNOSTIC_REPORT.txt
+            echo "memory addresses (CodeRegistration and MetadataRegistration)." >> dumper_output/DIAGNOSTIC_REPORT.txt
+            echo "" >> dumper_output/DIAGNOSTIC_REPORT.txt
+            echo "Files Processed:" >> dumper_output/DIAGNOSTIC_REPORT.txt
+            echo "- libil2cpp.so: $(stat -c%s libil2cpp.so 2>/dev/null || echo 'unknown') bytes" >> dumper_output/DIAGNOSTIC_REPORT.txt
+            echo "- global-metadata.dat: $(stat -c%s assets/bin/Data/Managed/Metadata/global-metadata.dat 2>/dev/null || echo 'unknown') bytes" >> dumper_output/DIAGNOSTIC_REPORT.txt
+            echo "" >> dumper_output/DIAGNOSTIC_REPORT.txt
+            echo "Next Steps:" >> dumper_output/DIAGNOSTIC_REPORT.txt
+            echo "1. The binary requires manual reverse engineering analysis" >> dumper_output/DIAGNOSTIC_REPORT.txt
+            echo "2. Use tools like IDA Pro, Ghidra, or x64dbg to find CodeRegistration address" >> dumper_output/DIAGNOSTIC_REPORT.txt
+            echo "3. Run Il2CppDumper in manual mode with the found addresses" >> dumper_output/DIAGNOSTIC_REPORT.txt
+            echo "4. Alternatively, try a different version of Il2CppDumper or alternative tools" >> dumper_output/DIAGNOSTIC_REPORT.txt
+            echo "" >> dumper_output/DIAGNOSTIC_REPORT.txt
+            echo "Generated on: $(date)" >> dumper_output/DIAGNOSTIC_REPORT.txt
             
             echo "Created diagnostic report in dumper_output/DIAGNOSTIC_REPORT.txt"
           fi
